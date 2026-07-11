@@ -1,12 +1,11 @@
 workflows:
   android-apk:
-    name: بناء ملف APK
+    name: بناء ملف APK جاهز
     instance_type: linux_x2
     environment:
-      flutter: stable
+      flutter: "3.22.0"
     scripts:
       - flutter pub get
       - flutter build apk --release --no-shrink
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-      
