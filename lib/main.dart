@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:pdf_image_renderer/pdf_image_renderer.dart';
+import 'package:pdfx/pdfx.dart'; // ✅ استيراد المكتبة الجديدة
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 
@@ -75,6 +75,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // ✅ الدالة الجديدة لمعالجة PDF باستخدام pdfx
   Future<void> _processPdfFile(String filePath) async {
     setState(() {
       _isLoading = true;
@@ -83,33 +84,34 @@ class _HomePageState extends State<HomePage> {
     });
 
     try {
-      final pdf = await PdfImageRenderer.loadFile(filePath);
-      final pageCount = await pdf.getPageCount();
+      final pdfDocument = await PdfDocument.openFile(filePath);
+      final pageCount = pdfDocument.pagesCount;
       String fullText = '';
 
       setState(() => _statusMessage = 'يوجد $pageCount صفحة، جاري المعالجة...');
 
-      for (int i = 0; i < pageCount; i++) {
-        setState(() => _statusMessage = 'معالجة الصفحة ${i + 1} من $pageCount...');
+      for (int i = 1; i <= pageCount; i++) {
+        setState(() => _statusMessage = 'معالجة الصفحة $i من $pageCount...');
         
-        final page = await pdf.getPage(i);
-        final image = await page.render(
+        final page = await pdfDocument.getPage(i);
+        final pageImage = await page.render(
           width: page.width.toInt(),
           height: page.height.toInt(),
-          format: PdfImageFormat.png,
+          format: PdfPageImageFormat.png,
         );
 
         final tempDir = await Directory.systemTemp;
         final tempFile = File('${tempDir.path}/page_$i.png');
-        await tempFile.writeAsBytes(image!);
+        await tempFile.writeAsBytes(pageImage.bytes!);
 
         final pageText = await _recognizeFromImage(tempFile.path);
-        fullText += '\n\n=== الصفحة ${i + 1} ===\n$pageText';
+        fullText += '\n\n=== الصفحة $i ===\n$pageText';
 
         await tempFile.delete();
+        await page.close();
       }
 
-      await pdf.close();
+      await pdfDocument.close();
 
       setState(() {
         _extractedText = fullText;
