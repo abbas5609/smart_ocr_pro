@@ -1,0 +1,40 @@
+name: بناء APK نهائي وآمن
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: بناء ملف التطبيق
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: جلب كود المشروع
+        uses: actions/checkout@v4
+
+      - name: إعداد بيئة فلاتر متوافقة
+        uses: subosito/flutter-action@v5
+        with:
+          flutter-version: '3.19.6'
+          channel: 'stable'
+          cache: true
+
+      - name: إعدادات إضافية
+        run: |
+          flutter config --no-analytics
+          export PUB_UPGRADE_ATTEMPTS=1
+
+      - name: تحميل المكتبات
+        run: flutter pub get
+
+      - name: بناء ملف APK
+        run: flutter build apk --release --no-shrink --no-tree-shake-icons
+
+      - name: رفع الملف الجاهز
+        uses: actions/upload-artifact@v4
+        with:
+          name: الماسح_الذكي_APK
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 60
