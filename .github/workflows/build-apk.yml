@@ -2,31 +2,33 @@ name: بناء تطبيق APK
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch: # لتفعيل البناء يدوياً متى شئت
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
+    name: بناء الملف
     runs-on: ubuntu-latest
+
     steps:
-      - name: استخراج الكود
+      - name: جلب الكود
         uses: actions/checkout@v4
 
       - name: إعداد بيئة فلاتر
         uses: subosito/flutter-action@v5
         with:
-          flutter-version: 'stable'
-          cache: true
+          flutter-version: '3.22.0'
+          channel: 'stable'
 
-      - name: تحديث المكتبات
+      - name: تحميل المكتبات
         run: flutter pub get
 
-      - name: بناء ملف APK
+      - name: بناء ملف التطبيق
         run: flutter build apk --release --no-shrink
 
-      - name: رفع الملف النهائي
+      - name: رفع الملف الجاهز
         uses: actions/upload-artifact@v4
         with:
           name: الماسح_الذكي_APK
           path: build/app/outputs/flutter-apk/app-release.apk
-          retention-days: 30 # يبقى متاحاً للتحميل لمدة شهر
+          retention-days: 30
