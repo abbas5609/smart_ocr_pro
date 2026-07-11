@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:pdfx/pdfx.dart'; // ✅ استيراد المكتبة الجديدة
+import 'package:pdfx/pdfx.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 
@@ -75,7 +75,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // ✅ الدالة الجديدة لمعالجة PDF باستخدام pdfx
   Future<void> _processPdfFile(String filePath) async {
     setState(() {
       _isLoading = true;
@@ -264,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                   : SingleChildScrollView(
                       child: Text(
                         _extractedText.isEmpty
-                            ? 'سيظهر النص هنا بعد المعالجة...\n\nيدعم:\n• الصور من الكاميرا والمعرض\n• ملفات PDF بعدة صفحات\n• جميع الصور المخزنة في الهاتف'
+                            ? 'سيظهر النص هنا بعد المعالجة...\n\nيدعم:\n• الصور من الكاميرا والمعرض\n• ملفات PDF متعددة الصفحات\n• جميع الصور المخزنة في الهاتف'
                             : _extractedText,
                         textDirection: TextDirection.rtl,
                         style: const TextStyle(fontSize: 16, height: 1.6),
