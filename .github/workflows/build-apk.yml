@@ -1,13 +1,15 @@
 name: بناء تطبيق APK
-
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
-    name: بناء الملف
+    name: بناء ملف التطبيق
     runs-on: ubuntu-latest
 
     steps:
@@ -17,13 +19,13 @@ jobs:
       - name: إعداد بيئة فلاتر
         uses: subosito/flutter-action@v5
         with:
-          flutter-version: '3.22.0'
-          channel: 'stable'
+          flutter-version: 'stable'
+          cache: true
 
       - name: تحميل المكتبات
         run: flutter pub get
 
-      - name: بناء ملف التطبيق
+      - name: بناء ملف APK
         run: flutter build apk --release --no-shrink
 
       - name: رفع الملف الجاهز
