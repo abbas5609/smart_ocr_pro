@@ -1,0 +1,42 @@
+name: بناء APK نهائي وآمن
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: بناء ملف التطبيق
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: جلب كود المشروع
+        uses: actions/checkout@v4
+
+      - name: إعداد بيئة فلاتر متوافقة
+        uses: subosito/flutter-action@v5
+        with:
+          flutter-version: '3.19.6'
+          channel: 'stable'
+          cache: true
+
+      - name: إعدادات إضافية لتجنب الأخطاء
+        run: |
+          flutter config --no-analytics --enable-linux-desktop=false
+          export PUB_UPGRADE_ATTEMPTS=1
+          export FLUTTER_CHROME_SDK_DOWNLOAD=false
+
+      - name: تحميل جميع المكتبات
+        run: flutter pub get --no-example
+
+      - name: بناء ملف APK جاهز للتثبيت
+        run: flutter build apk --release --no-shrink --no-tree-shake-icons --no-pub
+
+      - name: رفع الملف النهائي للتحميل
+        uses: actions/upload-artifact@v4
+        with:
+          name: الماسح_الذكي_APK
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 60
+          
