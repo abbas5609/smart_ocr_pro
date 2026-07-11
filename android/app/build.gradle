@@ -1,15 +1,11 @@
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
+    localPropertiesFile.withReader('UTF-8') { reader -> localProperties.load(reader) }
 }
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    throw new GradleException("لم يتم تحديد موقع فلاتر، تأكد من إعدادات المشروع.")
-}
+if (flutterRoot == null) { throw new GradleException("Flutter SDK not found") }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -19,40 +15,19 @@ android {
     namespace "com.example.smart_ocr_pro"
     compileSdk 34
     ndkVersion flutter.ndkVersion
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
+    compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
+    kotlinOptions { jvmTarget = '1.8' }
+    sourceSets { main.java.srcDirs += 'src/main/kotlin' }
     defaultConfig {
         applicationId "com.example.smart_ocr_pro"
-        minSdkVersion 21  // ✅ الإصدار الأدنى المطلوب لدعم المكتبات
+        minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
         versionName "1.0.0"
     }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            shrinkResources false
-        }
-    }
+    buildTypes { release { minifyEnabled false } }
 }
 
-flutter {
-    source '../..'
-}
+flutter { source '../..' }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-}
+dependencies { implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version" }
